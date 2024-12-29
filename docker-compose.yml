@@ -1,0 +1,31 @@
+services:
+  minio:
+    image: docker.io/bitnami/minio:2022
+    container_name: MinIO.Server
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - 'minio_data:/data'
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=123456aA
+      - MINIO_DEFAULT_BUCKETS=minio-bucket
+
+  minio-api:
+    image: ${DOCKER_REGISTRY-}minioproject
+    container_name: MinIO.Web.Api
+    build:
+      context: .
+      dockerfile: MinIO-Project/Dockerfile
+    ports:
+      - 5000:8080
+      - 5001:8081
+
+networks:
+  minionetwork:
+    driver: bridge
+
+volumes:
+  minio_data:
+    driver: local
